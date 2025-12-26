@@ -4,6 +4,8 @@ import math
 import pygame
 from os.path import isfile, join
 from player import Player
+from object import Object
+from block import Block
 
 pygame.init()
 
@@ -44,6 +46,14 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
             
     return all_sprites
 
+def get_block(size):
+    path = './assets/terrain/Terrain.png'
+    image = pygame.image.load(path).convert_alpha() 
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+    
 def get_background(name):
     image = pygame.image.load('./assets/background/Pink.png')
     _, _, width, height = image.get_rect()
@@ -56,9 +66,12 @@ def get_background(name):
             
     return tiles, image
     
-def draw(window, bg, bg_image, player):
+def draw(window, bg, bg_image, player, objects):
     for tile in bg:
         window.blit(bg_image, tile)
+        
+    for object in objects:
+        object.draw(window)
         
     player.draw(window)
     
@@ -77,7 +90,9 @@ def main(window):
     clock = pygame.time.Clock()
     bg, bg_image = get_background('Pink.png')
     sprites = load_sprite_sheets('player', 'PinkMan', 32, 32, True)
+    block_size = 96
     player = Player(100, 100, 50, 50, sprites)
+    block = [Block(0, HEIGHT - block_size, block_size, get_block)]
 
     run = True
     while run:
@@ -90,7 +105,7 @@ def main(window):
           
         player.loop(FPS)
         handle_move(player)  
-        draw(window, bg, bg_image, player)    
+        draw(window, bg, bg_image, player, block)    
 
     pygame.quit()
     quit()
