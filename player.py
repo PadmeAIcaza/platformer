@@ -49,13 +49,13 @@ class Player(pygame.sprite.Sprite):
         self.update_sprite()
         
     def landed(self):
-        self.fall_count = 0
+        self.count = 0
         self.y_vel = 0
         self.jump_count = 0
         
     def hit_head(self):
         self.count = 0
-        self.y_vel += -1
+        self.y_vel *= -1
         
     def update_sprite(self):
         sprite_sheet = 'idle'
@@ -80,5 +80,5 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
         self.mask = pygame.mask.from_surface(self.sprite)
         
-    def draw(self, win):
-        win.blit(self.sprite, (self.rect.x, self.rect.y))
+    def draw(self, win, offset_x):
+        win.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))

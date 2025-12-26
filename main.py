@@ -66,14 +66,14 @@ def get_background(name):
             
     return tiles, image
     
-def draw(window, bg, bg_image, player, objects):
+def draw(window, bg, bg_image, player, objects, offset_x):
     for tile in bg:
         window.blit(bg_image, tile)
         
     for object in objects:
-        object.draw(window)
+        object.draw(window, offset_x)
         
-    player.draw(window)
+    player.draw(window, offset_x)
     
     pygame.display.update()
     
@@ -112,8 +112,10 @@ def main(window):
     player = Player(100, 100, 50, 50, sprites)
     floor = [Block(i*block_size, HEIGHT - block_size, block_size, get_block) 
              for i in range(-WIDTH//block_size, (WIDTH*2)//block_size)]
+    objects = [*floor, Block(0, HEIGHT - block_size*2, block_size, get_block), Block(block_size*3, HEIGHT - block_size*4, block_size, get_block)]
     
-    offset = 0
+    offset_x = 0
+    scroll_area_width = 200
 
     run = True
     while run:
@@ -129,8 +131,12 @@ def main(window):
                     player.jump()
             
         player.loop(FPS)
-        handle_move(player, floor)  
-        draw(window, bg, bg_image, player, floor)    
+        handle_move(player, objects)  
+        draw(window, bg, bg_image, player, objects, offset_x) 
+        
+        if ((player.rect.right - offset_x >= WIDTH - scroll_area_width) and player.x_vel > 0) or ( 
+                (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
+            offset_x += player.x_vel   
 
     pygame.quit()
     quit()
