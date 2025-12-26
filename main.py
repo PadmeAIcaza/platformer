@@ -112,6 +112,8 @@ def main(window):
     player = Player(100, 100, 50, 50, sprites)
     floor = [Block(i*block_size, HEIGHT - block_size, block_size, get_block) 
              for i in range(-WIDTH//block_size, (WIDTH*2)//block_size)]
+    
+    offset = 0
 
     run = True
     while run:
@@ -121,11 +123,11 @@ def main(window):
             if event.type == pygame.QUIT:
                 run = False
                 break
-            
+        
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and player.jump_count < 2:
                     player.jump()
-          
+            
         player.loop(FPS)
         handle_move(player, floor)  
         draw(window, bg, bg_image, player, floor)    
