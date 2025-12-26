@@ -90,7 +90,7 @@ def handle_vertical_collision(player, objects, dy):
                 player.rect.top = obj.rect.bottom
                 player.hit_head()
                 
-        collided_objects.append(obj)
+            collided_objects.append(obj)
         
     return collided_objects 
 
@@ -119,7 +119,11 @@ def handle_move(player, objects):
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
         
-    handle_vertical_collision(player, objects, player.y_vel)
+    vertical_collide = handle_vertical_collision(player, objects, player.y_vel)
+    to_check = [collide_left, collide_right, *vertical_collide]
+    for obj in to_check:
+        if obj and obj.name == 'fire':
+            player.make_hit()
 
 def main(window):
     clock = pygame.time.Clock()

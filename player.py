@@ -16,6 +16,8 @@ class Player(pygame.sprite.Sprite):
         self.fall_count = 0
         self.SPRITES = sprites
         self.jump_count = 0
+        self.hit = False
+        self.hit_count = 0
         
     def jump(self):
         self.y_vel = -self.GRAVITY*8
@@ -27,6 +29,10 @@ class Player(pygame.sprite.Sprite):
     def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
+        
+    def make_hit(self):
+        self.hit = True
+        self.hit_count = 0
         
         
     def move_left(self, vel):
@@ -45,6 +51,12 @@ class Player(pygame.sprite.Sprite):
         self.y_vel += min(1, (self.fall_count/fps)*self.GRAVITY)
         self.move(self.x_vel, self.y_vel)
         
+        if self.hit:
+            self.hit_count +=1
+        if self.hit_count > fps*2:
+            self.hit = False
+            self.hit_count = 0
+        
         self.fall_count += 1
         self.update_sprite()
         
@@ -59,7 +71,9 @@ class Player(pygame.sprite.Sprite):
         
     def update_sprite(self):
         sprite_sheet = 'idle'
-        if self.y_vel < 0:
+        if self.hit:
+            sprite_sheet = 'hit'
+        elif self.y_vel < 0:
             if self.jump_count == 1:
                 sprite_sheet = 'jump'
             elif self.jump_count == 2:
