@@ -49,7 +49,7 @@ class Player(pygame.sprite.Sprite):
         self.update_sprite()
         
     def landed(self):
-        self.count = 0
+        self.fall_count = 0
         self.y_vel = 0
         self.jump_count = 0
         
