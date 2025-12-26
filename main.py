@@ -6,6 +6,7 @@ from os.path import isfile, join
 from player import Player
 from object import Object
 from block import Block
+from fire import Fire
 
 pygame.init()
 
@@ -126,10 +127,12 @@ def main(window):
     sprites = load_sprite_sheets('player', 'PinkMan', 32, 32, True)
     block_size = 96
     player = Player(100, 100, 50, 50, sprites)
+    fire = Fire(100, HEIGHT - block_size - 64, 16, 32, load_sprite_sheets)
+    fire.on()
     floor = [Block(i*block_size, HEIGHT - block_size, block_size, get_block) 
              for i in range(-WIDTH//block_size, (WIDTH*2)//block_size)]
     objects = [*floor, Block(0, HEIGHT - block_size*2, block_size, get_block), 
-               Block(block_size*3, HEIGHT - block_size*4, block_size, get_block)]
+               Block(block_size*3, HEIGHT - block_size*4, block_size, get_block), fire]
     
     offset_x = 0
     scroll_area_width = 200
@@ -148,6 +151,7 @@ def main(window):
                     player.jump()
             
         player.loop(FPS)
+        fire.loop()
         handle_move(player, objects)  
         draw(window, bg, bg_image, player, objects, offset_x) 
         
