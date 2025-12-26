@@ -77,7 +77,23 @@ def draw(window, bg, bg_image, player, objects):
     
     pygame.display.update()
     
-def handle_move(player):
+    
+def handle_vertical_collision(player, objects, dy):
+    collided_objects = []
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            if dy > 0:
+                player.rect.bottom = obj.rect.top
+                player.landed()
+            elif dy < 0:
+                player.rect.top = obj.rect.bottom
+                player.hit_head()
+                
+        collided_objects.append(obj)
+        
+    return collided_objects 
+    
+def handle_move(player, objects):
     keys = pygame.key.get_pressed()
     
     player.x_vel = 0
@@ -85,6 +101,8 @@ def handle_move(player):
         player.move_left(PLAYER_VEL)
     if keys[pygame.K_RIGHT]:
         player.move_right(PLAYER_VEL)
+        
+    handle_vertical_collision(player, objects, player.y_vel)
 
 def main(window):
     clock = pygame.time.Clock()
@@ -92,7 +110,8 @@ def main(window):
     sprites = load_sprite_sheets('player', 'PinkMan', 32, 32, True)
     block_size = 96
     player = Player(100, 100, 50, 50, sprites)
-    block = [Block(0, HEIGHT - block_size, block_size, get_block)]
+    floor = [Block(i*block_size, HEIGHT - block_size, block_size, get_block) 
+             for i in range(-WIDTH//block_size, (WIDTH*2)//block_size)]
 
     run = True
     while run:
@@ -104,8 +123,8 @@ def main(window):
                 break
           
         player.loop(FPS)
-        handle_move(player)  
-        draw(window, bg, bg_image, player, block)    
+        handle_move(player, floor)  
+        draw(window, bg, bg_image, player, floor)    
 
     pygame.quit()
     quit()
